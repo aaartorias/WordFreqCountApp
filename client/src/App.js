@@ -2,30 +2,28 @@ import './App.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { AgGridColumn, AgGridReact } from "ag-grid-react";
-import "ag-grid-enterprise";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+import 'ag-grid-enterprise';
+import 'ag-grid-community/dist/styles/ag-grid.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 const SERVER_ADDRESS = 'http://localhost';
 const LISTENING_PORT = '9000';
-const FILEUPLOAD_ADDRESS =  SERVER_ADDRESS + ':' + LISTENING_PORT + '/uploadFile';
+const UPLOAD_API = '/uploadFile';
+const FILEUPLOAD_ADDRESS =  SERVER_ADDRESS + ':' + LISTENING_PORT + UPLOAD_API;
 
 class Display extends React.Component {
 
   render() {
     const wordCount = this.props.wordCount;
-    var wordList = [];
-    var countList = [];
+    var dict = [];
     var x = wordCount.toString().replace('{','')
             .replace('}','')
             .replaceAll('"','')
             .split(',').map( (address, index) => {
               return <p key={index}>{ address }</p>; 
            });;
-
-    var dict = [];
-
+           
     x.forEach((item,index) => {
       let k = (item.props.children).toString().split(":")[0];
       let v = (item.props.children).toString().split(":")[1];
@@ -36,8 +34,8 @@ class Display extends React.Component {
       <div  className="ag-theme-alpine" style={{ height: 500, width: 300 }}>
         {this.props.canCreateTable ? (
           <AgGridReact rowData={dict}>
-            <AgGridColumn field="word" />
-            <AgGridColumn field="frequency" />
+            <AgGridColumn field='word' />
+            <AgGridColumn field='frequency' />
           </AgGridReact>
         ) : (
     			<p></p>
@@ -60,7 +58,6 @@ class Form extends React.Component {
     this.setState({ selectedFile: event.target.files[0] });
     this.props.setFile(event.target.files[0]);
     this.setState({ isFileSelected: true });
-    this.props.resetResultTitle();
     this.props.resetWordCount();
     this.clearWarning();
     this.props.resetCanCreateTable(); 
@@ -132,8 +129,6 @@ class App extends React.Component {
   setResultState = (props) => {
     var tmp = JSON.stringify(props);
     this.setState({wordCount:tmp});
-    this.setState({titleWord:'Word'});
-    this.setState({titleFrequency:'Frequency'});
 
   };
 
@@ -149,11 +144,6 @@ class App extends React.Component {
     this.setState({canCreateTable:false});
   };
 
-  resetResultTitle = () => {
-    this.setState({titleWord:''});
-    this.setState({titleFrequency:''});
-  }
-
   resetWordCount = () => {
     this.setState({wordCount:''});
   }
@@ -166,13 +156,13 @@ class App extends React.Component {
         </div>
         <Form 
           setResult={this.setResultState} setFile={this.setSelectedFile} 
-          resetWordCount={this.resetWordCount} resetResultTitle={this.resetResultTitle} 
+          resetWordCount={this.resetWordCount} 
           selectedFile={this.state.selectedFile} wordCount={this.state.wordCount}
           resetCanCreateTable={this.resetCanCreateTable} setCanCreateTable={this.setCanCreateTable}
         />
         <Display 
-          wordCount={this.state.wordCount} titleFrequency={this.state.titleFrequency}
-          titleWord={this.state.titleWord} isFileSelected={this.state.selectedFile} 
+          wordCount={this.state.wordCount} 
+           isFileSelected={this.state.selectedFile} 
           canCreateTable={this.state.canCreateTable}
         />
       </div>

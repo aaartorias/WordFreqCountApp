@@ -28,7 +28,10 @@ router.post('/',  upload.single('file'), function(req, res, next) {
         // Read file text and create wordFrequencyContainer => {Key(word) : Value(wordFrequency)}  
         // and send it in response      
         fs.readFile(`${publicStorage}/${inputFile.name}`, "utf8", function (error, data) {
-            if (error) throw error;
+            if (error) {
+                    console.error('Error:', error);
+                    return res.status(500).send({ msg: "Error occured" });   
+            };
             data = data.replace(/(\r\n|\n|\r)/gm," ");
             var wordsList = data.trim().split(" ");
             for (wordIndex in wordsList) {
