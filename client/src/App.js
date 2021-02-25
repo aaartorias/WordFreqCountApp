@@ -23,15 +23,15 @@ class Display extends React.Component {
             .split(',').map( (address, index) => {
               return <p key={index}>{ address }</p>; 
            });;
-           
+
     x.forEach((item,index) => {
-      let k = (item.props.children).toString().split(":")[0];
-      let v = (item.props.children).toString().split(":")[1];
+      let k = (item.props.children).toString().split(':')[0];
+      let v = (item.props.children).toString().split(':')[1];
       dict.push({word:k,frequency:v})
     });
 
     return (
-      <div  className="ag-theme-alpine" style={{ height: 500, width: 300 }}>
+      <div  className='ag-theme-alpine' style={{ height: 500, width: 300 }}>
         {this.props.canCreateTable ? (
           <AgGridReact rowData={dict}>
             <AgGridColumn field='word' />
@@ -117,9 +117,7 @@ class Form extends React.Component {
 class App extends React.Component {
   state = {
     selectedFile: false,
-    wordCount : [
-     
-    ],
+    wordCount : [],
     titleFreqeuncy:'',
     titleWord:'',
     canCreateTable:false,
