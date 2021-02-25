@@ -1,7 +1,7 @@
 # WordFreqCountApp
-root directory - wordFrequencyApp
+root directory - WordFreqCountApp
 Project structure:
-wordFrequencyApp -
+WordFreqCountApp -
 	             - api
 	           		- route
                        - fileUpload.js
@@ -18,3 +18,9 @@ Follow below steps to run this App:
 6) Open another terminal or another partition in current terminal and go to WD in step 1
 7) Go to Client directory - cd WordFrequency/client
 8) repeat step 4 then step 5 to run the server
+
+Assumptions Made:
+
+1) We are only uploading plain/text files - I haven't added check to display message when other format is selected. 
+   Behavior is not defined if other formats are uploaded
+2) WordFreqCountApp/api/public folder is accessible for any write actions by the api process
