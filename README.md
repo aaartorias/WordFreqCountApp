@@ -2,12 +2,12 @@
 root directory - WordFreqCountApp
 
 - WordFreqCountApp
-- api
-    - route
-        - fileUpload.js
-- client
-    - src
-        - app.js
+    - api
+        - route
+            - fileUpload.js
+    - client
+        - src
+            - app.js
 			
 Follow below steps to run this App:
 1) Go to your working directory(WD) in Termina/Command prompt
