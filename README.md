@@ -24,3 +24,4 @@ Assumptions Made:
 1) We are only uploading plain/text files - I haven't added check to display message when other format is selected. 
    Behavior is not defined if other formats are uploaded
 2) WordFreqCountApp/api/public folder is accessible for any write actions by the api process
+3) Output table is not sorted in any order; ordering is based on when a word is encountered first
