@@ -1,11 +1,11 @@
 # WordFreqCountApp
 root directory - WordFreqCountApp
-Project structure:
-WordFreqCountApp
+
+- WordFreqCountApp
 - api
-	           		- route
+    - route
                        - fileUpload.js
-- client
+                       - client
 	           		- src
                        - app.js
 			
