@@ -48,35 +48,51 @@ class Display extends React.Component {
 class Form extends React.Component {
   
   state = {
-    selectedFile: this.props.selectedFile,
-    wordCount: this.props.wordCount, 
+    selectedFile: '',
     isFileSelected: false, 
     warning:'',
   };
 
-  resetOutputAndSelectFileActions = (event) => {
-    this.setState({ selectedFile: event.target.files[0] });
-    this.props.setFile(event.target.files[0]);
-    this.setState({ isFileSelected: true });
-    this.props.resetWordCount();
-    this.clearWarning();
-    this.props.resetCanCreateTable(); 
+  handleInputSelection = (event) => {
+
+    // Clear warnings
+    if (this.state.warnings != '') {
+      this.clearWarning();
+    }
+
+    // SelectedFile:   file selected in input field otherwise ''
+    // isFileSelected: true if a file is selected otherwise false
+    if (event.target.files[0] == undefined) {
+      this.setState({ selectedFile: '' });
+      this.setState({ isFileSelected: false });
+    } else {
+      this.setState({ isFileSelected: true });
+      this.setState({ selectedFile: event.target.files[0] });
+    }
+
+    // Reset wordCount - used to contain wordCountResult 
+    this.props.setWordCount('');
+    //  reset CanCreateTable - flag that signals to stop displaying result table
+    this.props.setCanCreateTable(false); 
+
 	};
 
   clearWarning = () => {
     this.setState({warning:''});
   }
 
-  postAndSetAppState = () => {
+  handleFormSubmission = () => {
+
     if (this.state.isFileSelected) {
       const formData = new FormData();
       formData.append('file', this.state.selectedFile);
+
       axios.post(FILEUPLOAD_ADDRESS, formData, {} )
-        .then((response) =>{ 
-          this.props.setCanCreateTable();
-          this.props.setResult(response.data);
+      .then((response) =>{ 
+          this.props.setCanCreateTable(true);
+          this.props.setWordCount(response.data);
         })
-        .catch((error) => {
+      .catch((error) => {
           console.error('Error:', error);
       });
     } 
@@ -87,12 +103,12 @@ class Form extends React.Component {
 
   // When new input file is added, reset data received from previous file submission
   // Display File information
-  // Handle file submission with postAndSetAppState
+  // call handleFormSubmission to process the submission of file.
   render() {
     return (
       <div>
         <p>{this.state.warning}</p>
-      <input type="file" name="file" onChange={this.resetOutputAndSelectFileActions} />
+      <input type="file" name="file" onChange={this.handleInputSelection} />
       {this.state.isFileSelected ? (
 				<div>
 					<p>Filename: {this.state.selectedFile.name}</p>
@@ -107,7 +123,7 @@ class Form extends React.Component {
 				<p>Select a file to show details</p>
 			)}
 			<div>
-				<button onClick={this.postAndSetAppState}>Submit</button>
+				<button onClick={this.handleFormSubmission}>Submit</button>
 			</div>  
       </div>
     );
@@ -115,36 +131,23 @@ class Form extends React.Component {
 }
 
 class App extends React.Component {
+
   state = {
-    selectedFile: false,
     wordCount : [],
     titleFreqeuncy:'',
     titleWord:'',
     canCreateTable:false,
   };
-  
 
-  setResultState = (props) => {
+  // Setter
+  setWordCount = (props) => {
     var tmp = JSON.stringify(props);
     this.setState({wordCount:tmp});
-
   };
 
-  setSelectedFile = (props) => {
-    this.setState({selectedFile:true});
+  setCanCreateTable = (props) => {
+    this.setState({canCreateTable:props});
   };
-
-  setCanCreateTable = () => {
-    this.setState({canCreateTable:true});
-  };
-
-  resetCanCreateTable = () => {
-    this.setState({canCreateTable:false});
-  };
-
-  resetWordCount = () => {
-    this.setState({wordCount:''});
-  }
 
   render() {
     return (
@@ -153,14 +156,11 @@ class App extends React.Component {
           {this.props.title}
         </div>
         <Form 
-          setResult={this.setResultState} setFile={this.setSelectedFile} 
-          resetWordCount={this.resetWordCount} 
-          selectedFile={this.state.selectedFile} wordCount={this.state.wordCount}
-          resetCanCreateTable={this.resetCanCreateTable} setCanCreateTable={this.setCanCreateTable}
+          setWordCount={this.setWordCount}
+          setCanCreateTable={this.setCanCreateTable}
         />
         <Display 
           wordCount={this.state.wordCount} 
-           isFileSelected={this.state.selectedFile} 
           canCreateTable={this.state.canCreateTable}
         />
       </div>

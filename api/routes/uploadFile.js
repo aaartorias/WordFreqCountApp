@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var multer  = require('multer')
-var upload = multer({ dest: '.' })
 var publicStorage = __dirname + '/../' + 'public/storage/';
+var upload = multer({ dest: publicStorage })
+
 
 // TODO: improve error handling
 
@@ -12,12 +13,6 @@ router.post('/',  upload.single('file'), function(req, res, next) {
     var wordFrequencyContainer = {};
     const inputFile = req.files.file;
     try {
-
-        // If public/storage directory doesn't exist create one
-        if (!fs.existsSync(publicStorage)){
-            console.log('Creating directory ./../public/storage');
-            fs.mkdirSync(publicStorage);
-        }
 
         // Place the file inside ./../public/storage directory
         inputFile.mv(`${publicStorage}/${inputFile.name}`, function (error) {
