@@ -15,25 +15,10 @@ const FILEUPLOAD_ADDRESS =  SERVER_ADDRESS + ':' + LISTENING_PORT + UPLOAD_API;
 class Display extends React.Component {
 
   render() {
-    const wordCount = this.props.wordCount;
-    var dict = [];
-    var x = wordCount.toString().replace('{','')
-            .replace('}','')
-            .replaceAll('"','')
-            .split(',').map( (address, index) => {
-              return <p key={index}>{ address }</p>; 
-           });;
-
-    x.forEach((item,index) => {
-      let k = (item.props.children).toString().split(':')[0];
-      let v = (item.props.children).toString().split(':')[1];
-      dict.push({word:k,frequency:v})
-    });
-
-    return (
+        return (
       <div  className='ag-theme-alpine' style={{ height: 500, width: 300 }}>
         {this.props.canCreateTable ? (
-          <AgGridReact rowData={dict}>
+          <AgGridReact rowData={this.props.wordFrequencyResult}>
             <AgGridColumn field='word' />
             <AgGridColumn field='frequency' />
           </AgGridReact>
@@ -70,10 +55,10 @@ class Form extends React.Component {
       this.setState({ selectedFile: event.target.files[0] });
     }
 
-    // Reset wordCount - used to contain wordCountResult 
-    this.props.setWordCount('');
+    // Reset wordFrequencyResult - used to contain wordFrequencyResult
+    this.props.resetwordFrequencyResult();
     //  reset CanCreateTable - flag that signals to stop displaying result table
-    this.props.setCanCreateTable(false); 
+    this.props.disableTableCreation(); 
 
 	};
 
@@ -89,8 +74,8 @@ class Form extends React.Component {
 
       axios.post(FILEUPLOAD_ADDRESS, formData, {} )
       .then((response) =>{ 
-          this.props.setCanCreateTable(true);
-          this.props.setWordCount(response.data);
+          this.props.enableTableCreation();
+          this.props.setwordFrequencyResult(response.data);
         })
       .catch((error) => {
           console.error('Error:', error);
@@ -133,34 +118,57 @@ class Form extends React.Component {
 class App extends React.Component {
 
   state = {
-    wordCount : [],
+    wordFrequencyResult : [],
     titleFreqeuncy:'',
     titleWord:'',
     canCreateTable:false,
   };
 
   // Setter
-  setWordCount = (props) => {
-    var tmp = JSON.stringify(props);
-    this.setState({wordCount:tmp});
+  setwordFrequencyResult = (props) => {
+    var dict = [];
+    var x = JSON.stringify(props).replace('{','')
+            .replace('}','')
+            .replaceAll('"','')
+            .split(',').map( (address, index) => {
+              return <p key={index}>{ address }</p>; 
+           });;
+
+    x.forEach((item,index) => {
+      let k = (item.props.children).toString().split(':')[0];
+      let v = (item.props.children).toString().split(':')[1];
+      dict.push({word:k,frequency:v})
+    });
+
+    this.setState({wordFrequencyResult:dict});
   };
 
-  setCanCreateTable = (props) => {
-    this.setState({canCreateTable:props});
+  enableTableCreation = () => {
+    this.setState({canCreateTable:true});
+  };
+
+  resetwordFrequencyResult = () => {
+    this.setState({wordFrequencyResult:[]});
+  };
+  
+  disableTableCreation = () => {
+    this.setState({canCreateTable:false});
   };
 
   render() {
     return (
       <div>
-        <div>
+        <div className="header">
           {this.props.title}
         </div>
         <Form 
-          setWordCount={this.setWordCount}
-          setCanCreateTable={this.setCanCreateTable}
+          setwordFrequencyResult={this.setwordFrequencyResult}
+          resetwordFrequencyResult={this.resetwordFrequencyResult}
+          enableTableCreation={this.enableTableCreation}
+          disableTableCreation={this.disableTableCreation}
         />
         <Display 
-          wordCount={this.state.wordCount} 
+          wordFrequencyResult={this.state.wordFrequencyResult} 
           canCreateTable={this.state.canCreateTable}
         />
       </div>

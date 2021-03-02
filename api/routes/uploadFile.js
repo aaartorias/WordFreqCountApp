@@ -9,7 +9,7 @@ var upload = multer({ dest: publicStorage })
 // TODO: improve error handling
 
 router.post('/',  upload.single('file'), function(req, res, next) {
-
+    console.log("HERE");
     var wordFrequencyContainer = {};
     const inputFile = req.files.file;
     try {
